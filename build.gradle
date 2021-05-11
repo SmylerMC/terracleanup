@@ -1,0 +1,72 @@
+plugins {
+    id "java"
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+    id "eclipse"
+}
+
+
+sourceCompatibility = 1.8
+group = "fr.thesmyler"
+version = "1.0." + ('git rev-list --count HEAD'.execute().text.trim())
+
+repositories {
+
+    jcenter()
+    mavenCentral()
+    
+    maven {
+        name = "JitPack"
+        url = "https://jitpack.io/"
+    }
+    
+    maven { //used for leveldb
+        name = "DaPorkchop_"
+        url = "https://maven.daporkchop.net/"
+    }
+    
+    maven { //used for leveldb
+        name = "OpenCollab Snapshots"
+        url = "https://repo.opencollab.dev/snapshot/"
+    }
+}
+
+dependencies {
+ 
+    testImplementation "junit:junit:4.13"
+    
+    implementation "org.apache.logging.log4j:log4j-api:2.14.1"
+    implementation "org.apache.logging.log4j:log4j-core:2.14.1"
+    
+    implementation "com.github.SmylerMC:terraminusminus:master-SNAPSHOT"
+    implementation "commons-cli:commons-cli:1.4"
+    // implementation("io.github.opencubicchunks:regionlib:0.65.0-SNAPSHOT")
+    
+}
+
+
+// Let build task generate a shadow jar
+build.dependsOn shadowJar
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
+// Generate jar manifest with main class
+jar {
+    manifest {
+        attributes 'Main-Class': 'fr.thesmyler.terracleanup.TerraCleanupHeadless'
+    }
+}
+
+processResources {
+
+    // Redo when version changes
+    inputs.property "version", project.version
+
+    // Expand version token
+    from(sourceSets.main.resources.srcDirs) {
+        include 'fr/thesmyler/terracleanup/version.properties'
+        expand 'version': project.version
+    }
+    
+}

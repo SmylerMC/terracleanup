@@ -1,3 +1,10 @@
+# Eclipse stuff
+.classpath
+.project
+
+# Run directory
+terraplusplus
+
 .gradle
 /build/
 
